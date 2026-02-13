@@ -1,0 +1,40 @@
+#docker-image.yml
+name: Task Runner
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: 'trigger source'
+        required: false
+        default: 'cron-job.org'
+jobs:
+  aggregator:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Refresh cache
+        run: |
+          set -e
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          mkdir -p logs
+          ACCOUNT_ID="$(basename "$GITHUB_REPOSITORY")"
+          FILE="logs/${ACCOUNT_ID}.txt"
+          echo "$(date '+%T') | range=$(shuf -i100000-999999 -n1)" >> "$FILE"
+          git add "$FILE"
+          git commit -m "checkpoint: branch logged"
+          git push
+          sleep $(( ( $(date +%s) % 3 ) + 1 ))
+          echo "$(date '+%T') | achievement=$(shuf -i1000-9999 -n1)" >> "$FILE"
+          git add "$FILE"
+          git commit -m "sync: score2 updated"
+          git push
+          sleep $(( ( $(date +%s) % 3 ) + 1 ))
+          NASHJ="$(sha256sum "$FILE" | awk '{print $1}')"
+          echo "$(date '+%T') | key=$NASHJ" >> "$FILE"
+          git add "$FILE"
+          git commit -m "sync: salt updated"
+          git push
