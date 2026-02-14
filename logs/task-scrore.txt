@@ -41,3 +41,4 @@
 00:02:11 | achievement=7878
 00:02:14 | key=f20ca6d52cde06b9f07a89794c2a89f7cd19d2eba50b118a83e0f3488b1caeab
 01:02:08 | range=244501
+01:02:10 | achievement=3621
